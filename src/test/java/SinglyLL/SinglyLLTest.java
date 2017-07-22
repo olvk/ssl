@@ -1,7 +1,8 @@
 package SinglyLL;
 
-import org.junit.Assert;
+
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 public class SinglyLLTest {
 
-    private List<String> list;
+    public  List<String> list;
     @Before
     public void setup() {
         list = new SinglyLinkedList2<>();
@@ -23,7 +24,7 @@ public class SinglyLLTest {
 
     public void addStrings(int i) {
         for (int j = 1; j != i + 1; j++) {
-            System.out.println(j);
+            //System.out.println(j);
             String s = "Added string " + j;
             list.add(s);
         }
@@ -88,11 +89,6 @@ public class SinglyLLTest {
     @Test
     public void testContains() {
         addStrings(6);
-//        list.add("Added string 10");
-//        list.add("Added string 1");
-//        list.add("Added string 4");
-//        list.add("Added string 6");
-        list.add("Added string 8");
         assertTrue(list.contains("Added string 1"));
         assertTrue(list.contains("Added string 4"));
         assertTrue(list.contains("Added string 6"));
@@ -101,45 +97,35 @@ public class SinglyLLTest {
 
 
     //
-//tests for .toArray()
-//
+    //tests for .toArray()
+    //
 
-    public void setupForToArray ( int v, int sslV){
+    public void setupForToArray (int v, int sslV){
         addStrings(v);
         String[] values = new String[v];
         String[] sslValues = new String[sslV];
         for (int i = 0; i < v; i++) {
-            values[i] = "Added string " + (++i);
+            values[i] = "Added string " + (i);
         }
-        assertEquals(values, list.toArray(sslValues));
+        list.toArray();
+            assertEquals(values, list.toArray(sslValues));
     }
 
 
     @Test
-    public void testToArraySameSize() {
+    public void testToArray() {
         setupForToArray(6, 6);
         setupForToArray(6, 4);
         setupForToArray(6, 13);
     }
 
-//    @Test
-//    public void testToArraySameSize() {
-//        SetupForToArray s = new SetupForToArray();
-//        SetupForToArray(6, 6);
-//        assertEquals(s.values, list.toArray(sslValues));
-//    }
-//
-//    @Test
-//    public void testToArraySmaller() {
-//        setupForArray(6, 4);
-//        assertEquals(values, list.toArray(sslValues));
-//    }
-//
-//    @Test
-//    public void testToArrayBigger() {
-//        setupForArray(6, 13);
-//        assertEquals(values, list.toArray(sslValues));
-//    }
+    @Test
+    public void testToArrayWithGivenArray() {
+        setupForToArray(6, 6);
+    }
+
+
+
 
     @Test
     public void testAdd() {
@@ -153,6 +139,13 @@ public class SinglyLLTest {
     //
     //tests for.remove()
     //
+    @Test
+    public void testRemoveByObject() {
+        addStrings(3);
+        assertEquals(true, list.remove("Added string 2"));
+        assertEquals(2, list.size());
+    }
+
     @Test (expected = IndexOutOfBoundsException.class)
     public void testRemoveIndexLessThanZero() {
         assertEquals(true, list.remove(-5));
@@ -167,7 +160,7 @@ public class SinglyLLTest {
     }
 
     @Test
-    public void testRemove() {
+    public void testRemoveByIndex() {
         //when
         list.add("Added string 1");
         list.add("Added string 2");
@@ -178,7 +171,7 @@ public class SinglyLLTest {
     }
 
     //throws IndexOutOfBoundsException:Index is less than 0 or more than the number of elements. Index = 0
-    @Test (expected = NullPointerException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testClear() {
         //setup
         list.add("Added string 1");
@@ -194,9 +187,8 @@ public class SinglyLLTest {
     }
 
     //
-//tests for .get()
-//
-//надо будет откорректировать get
+    //tests for .get()
+    //
     @Test (expected = IndexOutOfBoundsException.class)
     public void testGetIndexLessThanZero() {
         assertEquals("Something", list.get(-1));
@@ -238,27 +230,25 @@ public class SinglyLLTest {
     //
     //tests for .indexOf()
     //
-    //думаю что этот тест мы не пройдем
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testIndexOfWithException() {
         addStrings(8);
-        assertEquals(13, list.indexOf("Added string 12"));
+        assertEquals(7, list.indexOf("Added string 12"));
     }
 
+    @Test
+    public void testIndexOfWithOneNode() {
+        addStrings(1);
+        assertEquals(0, list.indexOf("Added string 1"));
+    }
 
     //java.lang.NullPointerException
     @Test
     public void testIndexOf() {
-        //addStrings(8);
-        list.add("Added string 9");
-        list.add("Added string 5");
-        list.add("Added string 6");
-        list.add("Added string 1");
-        list.add("Added string 2");
-        list.add("Added string 3");
-        //assertEquals(0, list.indexOf("Added string 1"));
+        addStrings(8);
+        assertEquals(0, list.indexOf("Added string 1"));
         assertEquals(5, list.indexOf("Added string 6"));
-        //assertEquals(7, list.indexOf("Added string 8"));
+        assertEquals(7, list.indexOf("Added string 8"));
     }
 
 
@@ -266,11 +256,10 @@ public class SinglyLLTest {
 //tests for .lastIndexOf()
 
     //Unexpected exception, expected<java.lang.NullPointerException> but was<java.lang.AssertionError>
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IndexOutOfBoundsException.class)
     public void testLastIndexOfWithException() {
-        addStrings(4);
-        addStrings(4);
-        assertEquals(15, list.lastIndexOf("Added string 8"));
+        addStrings(2);
+        assertEquals(0, list.lastIndexOf("Added string 8"));
     }
 
     //Unexpected exception, expected<java.lang.NullPointerException> but was<java.lang.AssertionError>
@@ -280,7 +269,9 @@ public class SinglyLLTest {
         addStrings(4);
         addStrings(8);
         assertEquals(11, list.lastIndexOf("Added string 4"));
+        assertEquals(8, list.lastIndexOf("Added string 1"));
         assertEquals(15, list.lastIndexOf("Added string 8"));
+//        assertEquals(0, list.lastIndexOf("Added string 1"));
     }
 
     //

@@ -86,13 +86,22 @@ public class SinglyLinkedList2<E> implements List {
 
     @Override
     public boolean contains(Object o) {
-        for (Node<E> x = first; x.next != null; x = x.next) {
-            if (x.item.equals(o)) {
+//        Node<E> x = first;
+//        while (x != null) {
+//
+//        }
+
+
+
+
+        for (Node<E> x = first; x != null ; x = x.next) {
+            if (x.item.equals((E) o)) {
                 return true;
             }
         }
         return false;
     }
+
 
     //?
 
@@ -105,11 +114,11 @@ public class SinglyLinkedList2<E> implements List {
     @Override
     public Object[] toArray() {
         Object[] a = new Object[size];
-        for (Node<E> x = first; x != null; x = x.next) {
-            for (int i = 0; i < size; i++) {
-                a[i] = x.item;
+        int i =0;
+        for (Node<E> x = first; x != null && i < size; x = x.next) {
+            a[i] = x.item;
+            i++;
             }
-        }
         return a;
     }
 
@@ -133,24 +142,36 @@ public class SinglyLinkedList2<E> implements List {
     @Override
     public boolean add(Object o) {
 
-        Node<E> newNode = new Node<>((E) o, null);
-        if (size == 0) {
+        final Node<E> l = last;
+        final Node<E> newNode = new Node(o, null);
+        last = newNode;
+        if (l == null)
             first = newNode;
-            last = newNode;
-        } else {
-            last.next = newNode;
-            System.out.println(first.next.item);
-            last = newNode;
-        }
+        else
+            l.next = newNode;
         size++;
         return true;
+
+
+//        Node<E> newNode = new Node<>((E) o, null);
+//        if (size == 0) {
+//            first = newNode;
+//            last = newNode;
+//        } else {
+//            last.next = newNode;
+//            //System.out.println(first.next.item);
+//            last = newNode;
+//        }
+//        size++;
+//        return true;
 //        E e = (E) o;
 //        linkLast(e);
 //        return true;
     }
 
     public boolean remove(Object o) {
-        return false;
+        remove(indexOf(o));
+        return true;
     }
 
 
@@ -203,8 +224,7 @@ public class SinglyLinkedList2<E> implements List {
     }
 
 
-    //вставляет элементы начиная с указанного индекса, сдвигая остальные вправо
-    //не поняла в итоге
+
     @Override
     public boolean addAll(int index, Collection c) {
 
@@ -227,7 +247,6 @@ public class SinglyLinkedList2<E> implements List {
         for (Object object : c) {
             if (x.item == object) {
                 nodeByNext(node(indexOf(x))).next = x.next;
-                //он не будет здесь все равно потом на null ссылаться?/                x.item = null;
                 x.next = null;
                 x = next;
                 size--;
@@ -243,7 +262,6 @@ public class SinglyLinkedList2<E> implements List {
         for (Object object : c) {
             if (x.item != object) {
                 nodeByNext(node(indexOf(x))).next = x.next;
-                //он не будет здесь все равно потом на null ссылаться?
                         x.item = null;
                 x.next = null;
                 x = next;
@@ -296,30 +314,47 @@ public class SinglyLinkedList2<E> implements List {
     }
 
 
-
+    //криво? криво. но работает. (вроде)
     @Override
     public int indexOf(Object o) {
         int index = 0;
-        for (Node<E> x = first; !(x.item.equals(o)) || !(x.next.equals(null)); x = x.next) {
+        if (size == 0) {
+            if (first.item.equals(o)) {
+                return index;
+            } else throw new IndexOutOfBoundsException("No such object. " +
+                    "Also someone needs to write another exception for this case.");
+            }
+        for (Node<E> x = first; !(x.item.equals(o)) && (x.next != null); x = x.next) {
             index++;
         }
-        return index;
+        if ((index == size - 1) && !(last.item.equals(o))) throw new IndexOutOfBoundsException("No such object. " +
+                "Also someone needs to write another exception for this case.");
+            return index;
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        int index = 0;
+        int index = -1;
         int i = 0;
+//        if (last.item.equals(o))
+//            {return indexOf(last);
+//        } else
+            if (size == 0) {
+            if (first.item.equals(o)) {
+                return 0;
+            } else throw new IndexOutOfBoundsException("No such object. " +
+                    "Also someone needs to write another exception for this case.");
+        } else {
         for (Node<E> x = first; x != null; x = x.next) {
-            if (x != o) {
-                i++;
-            }
-            if (x == o) {
+            if (x.item.equals(o)) {
                 index = i;
-                i++;
             }
+            i++;
         }
-        return index;
+        if ((index == -1) && (i == size) && !(last.item.equals(o))) throw new IndexOutOfBoundsException("No such object. " +
+                "Also someone needs to write another exception for this case.");
+        else return index;
+        }
     }
 
     @Override
